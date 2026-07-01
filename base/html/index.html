@@ -102,7 +102,7 @@
             window.addEventListener('mousemove', onMouseMove);
 
             const loader = new OBJLoader();
-            loader.load('../assets/subjectiver.obj', 
+            loader.load('../assets/subjectiveclean.obj', 
                 (object) => {
                     model = object;
                     
@@ -117,6 +117,13 @@
                     const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
                     
                     model.position.sub(scaledCenter);
+                    
+                    const material = new THREE.MeshBasicMaterial({ color: 0xE8FFCC });
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material = material;
+                        }
+                    });
                     
                     rotationGroup.add(model);
                     
