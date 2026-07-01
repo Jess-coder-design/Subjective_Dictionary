@@ -49,8 +49,6 @@
     </style>
 </head>
 <body>
-    <div id="loading">Loading 3D model...</div>
-
     <script type="importmap">
         {
             "imports": {
@@ -129,13 +127,10 @@
                     
                     rotationGroup.rotation.x = Math.PI;
                     rotationGroup.rotation.z = Math.PI / 2;
-                    
-                    document.getElementById('loading').style.display = 'none';
                 },
                 undefined,
                 (error) => {
                     console.error('Model loading error:', error);
-                    document.getElementById('loading').textContent = 'Model file not found. Check console for details.';
                 }
             );
 
