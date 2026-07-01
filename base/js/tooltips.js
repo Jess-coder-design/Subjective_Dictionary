@@ -210,7 +210,7 @@ function handleCircleHover(entryOrEntries, circleElement, index) {
         tooltip.style.width = width + 'px';
         tooltip.style.maxWidth = width + 'px';
         tooltip.style.height = 'auto';
-        // tooltip.style.display = 'flex';  // HIDDEN - don't display tooltip
+        tooltip.style.display = 'flex';
         tooltip.style.flexDirection = 'column';
         tooltip.style.justifyContent = 'center';
         
@@ -243,10 +243,34 @@ function handleCircleHover(entryOrEntries, circleElement, index) {
         const tooltipWidth = finalRect.width;
         const tooltipHeight = finalRect.height;
         
-        // Don't draw lines since tooltip is hidden
+        // Draw all four lines
         svg.innerHTML = '';
+        const lineColor = 'rgba(255, 0, 0, 0.6)';
+        const lineWidth = 1;
         
-        tooltip.style.display = 'none';  // Ensure it stays hidden
+        const lines = [
+            { x1: localX, y1: 0, x2: localX, y2: localY - tooltipHeight / 2 },
+            { x1: localX, y1: localY + tooltipHeight / 2, x2: localX, y2: panelBounds.height },
+            { x1: 0, y1: localY, x2: localX - tooltipWidth / 2, y2: localY },
+            { x1: localX + tooltipWidth / 2, y1: localY, x2: panelBounds.width, y2: localY }
+        ];
+        
+        lines.forEach(lineData => {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', lineData.x1);
+            line.setAttribute('y1', lineData.y1);
+            line.setAttribute('x2', lineData.x2);
+            line.setAttribute('y2', lineData.y2);
+            line.setAttribute('stroke', lineColor);
+            line.setAttribute('stroke-width', lineWidth);
+            svg.appendChild(line);
+        });
+        
+        // Hide tooltip only if on alphabetical.html page
+        if (window.location.pathname.includes('alphabetical')) {
+            tooltip.style.display = 'none';
+            svg.innerHTML = '';  // Also hide lines
+        }
     }, 0);
 }
 
