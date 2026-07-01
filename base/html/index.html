@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Subjective Dictionary - 3D Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('../assets/backgroundbeige.jpg');
+            background-size: 220%;
+            background-position: -30px center;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            z-index: 10;
+        }
+        #dictionary-text {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 500;
+            font-size: 59px;
+            color: #E8FFCC;
+            letter-spacing: 4px;
+            z-index: 5;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">Loading 3D model...</div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+        let camera, scene, renderer, model, rotationGroup;
+        let mouseX = 0;
+
+        function init() {
+            const canvasWidth = 600;
+            const canvasHeight = 100;
+            const aspect = canvasWidth / canvasHeight;
+            const viewSize = 12;
+
+            camera = new THREE.OrthographicCamera(
+                viewSize * aspect / -2,
+                viewSize * aspect / 2,
+                viewSize / 2,
+                viewSize / -2,
+                0.1,
+                1000
+            );
+            camera.position.set(0, 0, 70);
+
+            scene = new THREE.Scene();
+            scene.background = null;
+
+            rotationGroup = new THREE.Group();
+            scene.add(rotationGroup);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(100, 100, 100);
+            scene.add(directionalLight);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(canvasWidth, canvasHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const dictText = document.createElement('div');
+            dictText.id = 'dictionary-text';
+            dictText.textContent = 'DICTIONARY';
+            document.body.appendChild(dictText);
+
+            window.addEventListener('mousemove', onMouseMove);
+
+            const loader = new OBJLoader();
+            loader.load('../assets/subjectiver.obj', 
+                (object) => {
+                    model = object;
+                    
+                    const box = new THREE.Box3().setFromObject(model);
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = 50 / maxDim * 0.9;
+                    
+                    model.scale.multiplyScalar(scale);
+                    
+                    const scaledBox = new THREE.Box3().setFromObject(model);
+                    const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
+                    
+                    model.position.sub(scaledCenter);
+                    
+                    const material = new THREE.MeshPhongMaterial({ color: 0xE8FFCC });
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            child.material = material;
+                        }
+                    });
+                    
+                    rotationGroup.add(model);
+                    
+                    rotationGroup.rotation.x = Math.PI;
+                    rotationGroup.rotation.z = Math.PI / 2;
+                    
+                    document.getElementById('loading').style.display = 'none';
+                },
+                undefined,
+                (error) => {
+                    console.error('Model loading error:', error);
+                    document.getElementById('loading').textContent = 'Model file not found. Check console for details.';
+                }
+            );
+
+            animate();
+        }
+
+        function onMouseMove(event) {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (rotationGroup) {
+                rotationGroup.rotation.x = Math.PI / 2;
+                rotationGroup.rotation.y = 0;
+                rotationGroup.rotation.z = mouseX * 2;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+        
+        document.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>

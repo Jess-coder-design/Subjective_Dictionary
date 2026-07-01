@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjective Dictionary</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div id="header">
+        <div id="header-left">
+            <h1>DISCOVER WORDS</h1>
+            <div id="header-left-content">
+                <input type="text" id="searchInput" placeholder="by search..." />
+                <button id="randomBtn" class="button-option">random</button>
+            </div>
+        </div>
+        <div id="header-right">
+            <h1 id="ordered-by-title">ORDERED BY</h1>
+            <div id="header-numbers">
+                <div class="number-box active-header-btn">overlapping keywords</div>
+                <div class="number-box">alphabetical</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="window">
+        <div id="dateContainer">
+            <div id="dateNavigator">
+                <div id="datePrevBtn">◀</div>
+                <div id="currentDate">April 10, 2026</div>
+                <div id="dateNextBtn">▶</div>
+            </div>
+        </div>
+        <div id="window-content"></div>
+        <svg id="circleLines"></svg>
+        <div id="circleInfo"></div>
+        <div id="zoomControls">
+            <button id="zoomInBtn">+</button>
+            <button id="zoomOutBtn">-</button>
+        </div>
+    </div>
+
+    <div id="footer">
+        <h2>ABOUT</h2>
+        <div id="footer-content">
+            <div id="aboutText">
+                <p>Subjective Dictionary investigates how the construction of dictionaries shapes language and, in turn, our perception of reality. While conventional dictionaries aim to fix meaning, this project understands every word as a point that overlaps with many others, consisting of subjective interpretations shaped by culture, language, and personal experience.
+
+The website uses data from Urban Dictionary and positions entries according to keyword relatedness in their definitions, clustering them based on shared terms. Each entry is displayed as a circle functioning as a node, where size represents popularity and color indicates the time of submission. Through this method of mapping, these perspectives form a growing archive of diverse realities and a research tool for exploring how meaning shifts. Another mode presents entries in alphabetical order, reflecting a more traditional dictionary structure. By visualizing how interpretations change across different mapping techniques, the project reveals the richness and plurality within the words we think we share.</p>
+            </div>
+            <div id="hoveredEntryInfo"></div>
+        </div>
+        <div id="footerScrollBtn">▼</div>
+    </div>
+
+    <script>
+        let currentMode = 'mix';
+        const modeFiles = {
+            'mix': '../json/collected-data-umap.json',
+            'alphabetical': '../json/collected-data-alphabetical.json'
+        };
+        
+        let allDefinitions = [];
+        let displayDefinitions = [];
+        let currentDate = new Date(2026, 3, 10);
+        let showDefinitionsMode = false;
+        let positioningMode = 'keyword';
+        let stickyCircleIndex = null;
+        let isDragging = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let offsetX = 0;
+        let offsetY = 0;
+        let zoomLevel = 1;
+        const minZoom = 0.05;
+        const maxZoom = 20;
+        const zoomStep = 0.02;
+        let zoomInterval = null;
+
+        // Navigation between modes
+        document.addEventListener('DOMContentLoaded', () => {
+            const numberBoxes = document.querySelectorAll('.number-box');
+            numberBoxes[0].addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+            numberBoxes[1].addEventListener('click', () => {
+                window.location.href = 'alphabetical.html';
+            });
+        });
+    </script>
+
+    <script src="../js/utils.js"></script>
+    <script src="../js/colors.js"></script>
+    <script src="../js/data-loader.js"></script>
+    <script src="../js/circle-renderer.js"></script>
+    <script src="../js/tooltips.js"></script>
+    <script src="../js/pan-zoom.js"></script>
+    <script src="../js/search.js"></script>
+    <script src="../js/date-manager.js"></script>
+    <script src="../js/footer-scroller.js"></script>
+    <script src="../js/mode-manager.js"></script>
+    <script src="../js/init.js"></script>
+</body>
+</html>
