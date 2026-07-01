@@ -147,7 +147,7 @@ function handleCircleHover(entryOrEntries, circleElement, index) {
         aboutText.style.display = 'none';
     }
     
-    tooltip.style.display = 'block';
+    tooltip.style.display = 'none';
     
     // Position off-screen temporarily to check if text overflows
     tooltip.style.left = '-9999px';
