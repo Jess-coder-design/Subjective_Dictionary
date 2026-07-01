@@ -49,8 +49,6 @@
     </style>
 </head>
 <body>
-    <div id="loading">Loading 3D model...</div>
-
     <script type="importmap">
         {
             "imports": {
@@ -89,13 +87,6 @@
             rotationGroup = new THREE.Group();
             scene.add(rotationGroup);
 
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(100, 100, 100);
-            scene.add(directionalLight);
-
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(canvasWidth, canvasHeight);
@@ -109,7 +100,7 @@
             window.addEventListener('mousemove', onMouseMove);
 
             const loader = new OBJLoader();
-            loader.load('./base/assets/subjectiver.obj', 
+            loader.load('./base/assets/subjectiveclean.obj', 
                 (object) => {
                     model = object;
                     
@@ -125,7 +116,7 @@
                     
                     model.position.sub(scaledCenter);
                     
-                    const material = new THREE.MeshPhongMaterial({ color: 0xE8FFCC });
+                    const material = new THREE.MeshBasicMaterial({ color: 0xE8FFCC });
                     model.traverse((child) => {
                         if (child.isMesh) {
                             child.material = material;
@@ -136,13 +127,10 @@
                     
                     rotationGroup.rotation.x = Math.PI;
                     rotationGroup.rotation.z = Math.PI / 2;
-                    
-                    document.getElementById('loading').style.display = 'none';
                 },
                 undefined,
                 (error) => {
                     console.error('Model loading error:', error);
-                    document.getElementById('loading').textContent = 'Model file not found. Check console for details.';
                 }
             );
 
