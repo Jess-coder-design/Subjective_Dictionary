@@ -125,7 +125,12 @@
                     
                     model.position.sub(scaledCenter);
                     
-                    const material = new THREE.MeshPhongMaterial({ color: 0xE8FFCC });
+                    const material = new THREE.MeshPhongMaterial({ 
+                        color: 0xE8FFCC,
+                        side: THREE.DoubleSide,
+                        emissive: 0x4a4a2a,
+                        shininess: 100
+                    });
                     model.traverse((child) => {
                         if (child.isMesh) {
                             child.material = material;
